@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpyderSammy - Home</title>
+    <style>
+        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .logo { width: 120px; margin-bottom: 20px; border-radius: 20px; }
+        .btn { background: #ff0000; color: #fff; border: 2px solid #fff; padding: 20px 40px; font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 20px #ff0000; transition: 0.3s; }
+        .btn:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff0000; }
+        h1 { letter-spacing: 3px; font-size: 3rem; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <img src="https://ssl.gstatic.com" class="logo">
+    <h1>SPYDER SAMMY</h1>
+    <button class="btn" onclick="launch()">Launch Proxy</button>
+
+    <script>
+        function launch() {
+            const win = window.open('about:blank', '_blank');
+            const doc = win.document;
+            doc.title = "Home - Classroom";
+            const icon = doc.createElement('link');
+            icon.rel = 'icon'; icon.href = 'https://ssl.gstatic.com';
+            doc.head.appendChild(icon);
+            const iframe = doc.createElement('iframe');
+            iframe.src = "https://dreams.gorich.hk"; 
+            iframe.style = "position:fixed; inset:0; width:100%; height:100%; border:none; margin:0; z-index:999999;";
+            doc.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>
