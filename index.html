@@ -5,30 +5,37 @@
     <title>SpyderSammy - Search</title>
     <style>
         body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .logo { width: 80px; margin-bottom: 10px; }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; letter-spacing: 2px; color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        .container { text-align: center; width: 100%; max-width: 600px; padding: 20px; }
+        .logo { width: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 10px #ff0000); }
+        h1 { font-size: 3rem; margin-bottom: 20px; color: #ff0000; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px #ff0000; }
         
-        /* The Search Bar Container */
-        .search-box { width: 80%; max-width: 600px; position: relative; }
+        .search-wrapper { position: relative; width: 100%; }
         input {
-            width: 100%; padding: 15px 25px; border-radius: 50px; border: 2px solid #333;
-            background: #111; color: #fff; font-size: 1.1rem; outline: none; transition: 0.3s;
+            width: 100%; padding: 18px 30px; border-radius: 50px; border: 2px solid #333;
+            background: #111; color: #fff; font-size: 1.2rem; outline: none; transition: 0.4s;
+            box-sizing: border-box;
         }
-        input:focus { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); }
-
-        .desc { margin-top: 15px; color: #666; font-size: 0.9rem; }
+        input:focus { border-color: #ff0000; box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); }
+        
+        .footer { margin-top: 30px; color: #444; font-size: 0.8rem; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <img src="https://ssl.gstatic.com" class="logo">
-    <h1>SPYDER SAMMY</h1>
+    <div class="container">
+        <img src="https://ssl.gstatic.com" class="logo">
+        <h1>SpyderSammy</h1>
+        
+        <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="Search the web or enter URL..." autofocus>
+        </div>
 
-    <div class="search-box">
-        <input type="text" id="search-input" placeholder="Search DuckDuckGo or enter a URL..." autofocus>
+        <div class="footer">STAY STEALTHY • SPYDERSAMMY PROXY</div>
     </div>
 
-    <p class="desc">Encrypted with Cloaking & Privacy Protection</p>
+    <form id="proxy-form" action="https://www.croxyproxy.com_" method="post" target="_blank" style="display:none;">
+        <input type="hidden" name="url" id="proxy-url">
+    </form>
 
     <script>
         const input = document.getElementById('search-input');
@@ -36,50 +43,23 @@
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const query = input.value.trim();
-                if (query) launchProxy(query);
+                if (query) handleSearch(query);
             }
         });
 
-        function launchProxy(query) {
-            // The DayDream X backend gateway
-            const proxyBase = "https://dreams.gorich.hk"; 
+        function handleSearch(query) {
+            let targetUrl;
+            const isUrl = query.includes('.') && !query.includes(' ');
             
-            // Logic: Determine if input is a URL or a Search Query
-            let finalUrl;
-            const urlPattern = /^(http|https):\/\/[^\s$.?#].[^\s]*$/gm;
-            const domainPattern = /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
-
-            if (urlPattern.test(query) || domainPattern.test(query)) {
-                // If it's a URL, ensure it has http prefix
-                finalUrl = query.includes('://') ? query : 'http://' + query;
+            if (isUrl) {
+                targetUrl = query.startsWith('http') ? query : 'https://' + query;
             } else {
-                // If it's a search, use DuckDuckGo
-                finalUrl = "https://duckduckgo.com" + encodeURIComponent(query);
+                targetUrl = "https://duckduckgo.com" + encodeURIComponent(query);
             }
 
-            // Step 1: Open about:blank Cloak
-            const win = window.open('about:blank', '_blank');
-            const doc = win.document;
-
-            // Step 2: Branding (Classroom Icon + Title)
-            doc.title = "Home - Classroom";
-            const icon = doc.createElement('link');
-            icon.rel = 'icon'; 
-            icon.href = 'https://ssl.gstatic.com';
-            doc.head.appendChild(icon);
-
-            // Step 3: Load Proxy & Encode URL
-            // Ultraviolet proxies usually require the URL to be encoded
-            const encoded = btoa(finalUrl); // Basic Base64 encoding
-            
-            const iframe = doc.createElement('iframe');
-            // This structure mimics how DayDream X points to its internal browser
-            iframe.src = `${proxyBase}/uv/service/${encoded}`; 
-            
-            iframe.style = "position:fixed; inset:0; width:100%; height:100%; border:none; margin:0; z-index:999999;";
-            
-            doc.body.appendChild(iframe);
-            doc.body.style.margin = "0";
+            // Launching via the proxy form
+            document.getElementById('proxy-url').value = targetUrl;
+            document.getElementById('proxy-form').submit();
         }
     </script>
 </body>
