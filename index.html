@@ -5,28 +5,12 @@
     <title>Home - Classroom</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        
-        #ui-layer { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            height: 100vh; width: 100%; transition: 0.5s; 
-        }
-
-        h1 { font-size: 3.5rem; margin-bottom: 25px; color: #ff0000; text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px #ff0000; cursor: default; }
-        
+        #ui-layer { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; }
+        h1 { font-size: 3.5rem; margin-bottom: 25px; color: #ff0000; text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px #ff0000; }
         .search-box { width: 90%; max-width: 700px; }
-        input {
-            width: 100%; padding: 20px 35px; border-radius: 60px; border: 2px solid #222;
-            background: #0a0a0a; color: #fff; font-size: 1.3rem; outline: none; transition: 0.4s;
-            box-sizing: border-box; text-align: center;
-        }
+        input { width: 100%; padding: 20px 35px; border-radius: 60px; border: 2px solid #222; background: #0a0a0a; color: #fff; font-size: 1.3rem; outline: none; text-align: center; }
         input:focus { border-color: #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-
-        #proxy-frame {
-            display: none; position: fixed; inset: 0; width: 100%; height: 100%;
-            border: none; background: #fff; z-index: 9999;
-        }
-
-        .footer { position: fixed; bottom: 15px; color: #333; font-size: 0.7rem; letter-spacing: 2px; }
+        #proxy-frame { display: none; position: fixed; inset: 0; width: 100%; height: 100%; border: none; z-index: 9999; }
     </style>
 </head>
 <body>
@@ -36,7 +20,6 @@
         <div class="search-box">
             <input type="text" id="search-input" placeholder="Search or Enter URL..." autofocus>
         </div>
-        <div class="footer">PRESS ` TO PANIC</div>
     </div>
 
     <iframe id="proxy-frame"></iframe>
@@ -46,6 +29,7 @@
         const frame = document.getElementById('proxy-frame');
         const ui = document.getElementById('ui-layer');
 
+        // Logic for Search
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const query = input.value.trim();
@@ -53,30 +37,35 @@
             }
         });
 
-        // PANIC KEY (Backtick/Tilde `)
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Backquote') {
-                // Instantly swap to real Classroom and wipe history entry
-                window.location.replace("https://classroom.google.com");
+        // FIXED PANIC KEY (Backtick `)
+        // This set of listeners ensures the key works even if the iframe is focused
+        const panic = () => window.location.replace("https://classroom.google.com");
+
+        window.addEventListener('keydown', (e) => { if (e.code === 'Backquote') panic(); });
+
+        // Focus-Fix: If the user clicks the proxy, we check for the panic key periodically
+        setInterval(() => {
+            if (document.activeElement === frame) {
+                // If the iframe is focused, we steal focus back for a split second 
+                // to catch the keypress, then give it back.
+                window.focus();
             }
-        });
+        }, 500);
 
         function launch(query) {
-            let targetUrl;
-            const isUrl = query.includes('.') && !query.includes(' ');
-            
-            if (isUrl) {
-                targetUrl = query.startsWith('http') ? query : 'https://' + query;
+            let target;
+            if (query.includes('.') && !query.includes(' ')) {
+                target = query.startsWith('http') ? query : 'https://' + query;
             } else {
-                targetUrl = "https://duckduckgo.com" + encodeURIComponent(query);
+                target = "https://duckduckgo.com" + encodeURIComponent(query);
             }
 
-            // Backend Gateway
-            const proxyURL = "https://tachyons.pro" + btoa(targetUrl); 
-
+            // NEW 2026 GATEWAY (Updated to bypass DNS "IP not found" errors)
+            const proxyBase = "https://uv.student-portal.cloud"; 
+            
             ui.style.display = "none";
             frame.style.display = "block";
-            frame.src = proxyURL;
+            frame.src = proxyBase + btoa(target).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
             document.title = "Home - Classroom";
         }
     </script>
