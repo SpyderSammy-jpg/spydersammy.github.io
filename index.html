@@ -2,71 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home - Classroom</title>
+    <title id="tab-title">Home - Classroom</title>
+    <link id="tab-icon" rel="icon" href="https://ssl.gstatic.com">
     <style>
+        :root { --theme: #ff0000; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        #ui-layer { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; }
-        h1 { font-size: 3.5rem; margin-bottom: 25px; color: #ff0000; text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px #ff0000; }
-        .search-box { width: 90%; max-width: 700px; }
-        input { width: 100%; padding: 20px 35px; border-radius: 60px; border: 2px solid #222; background: #0a0a0a; color: #fff; font-size: 1.3rem; outline: none; text-align: center; }
-        input:focus { border-color: #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-        #proxy-frame { display: none; position: fixed; inset: 0; width: 100%; height: 100%; border: none; z-index: 9999; }
+        #ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: relative; background: #000; }
+        h1 { font-size: 3.5rem; margin-bottom: 25px; color: var(--theme); text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px var(--theme); }
+        #pass-input { width: 90%; max-width: 400px; padding: 15px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; }
+        
+        /* Chrome Toolbar */
+        #toolbar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #202124; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 15px; z-index: 10001; box-sizing: border-box; }
+        .address-bar { flex-grow: 1; background: #303134; height: 32px; border-radius: 20px; margin: 0 15px; display: flex; align-items: center; padding: 0 10px; }
+        #search-input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 0.9rem; }
+        
+        .mirror-btn { background: #3c4043; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 5px; }
+        .mirror-btn:hover { background: var(--theme); }
+
+        #frame { display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); border: none; z-index: 9999; background: #fff; }
+        #settings { display: none; position: fixed; top: 60px; left: 15px; background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid var(--theme); z-index: 10005; }
     </style>
 </head>
 <body>
 
-    <div id="ui-layer">
+    <div id="ui">
         <h1>SPYDER SAMMY</h1>
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search or Enter URL..." autofocus>
-        </div>
+        <input type="password" id="pass-input" placeholder="Enter Access Code..." autofocus>
     </div>
 
-    <iframe id="proxy-frame"></iframe>
+    <div id="settings">
+        <label style="font-size: 10px; color:#888;">PANIC URL</label><br>
+        <input type="text" id="panic-url" value="https://classroom.google.com" style="background:#000; color:#fff; border:1px solid #333; margin-bottom:10px;"><br>
+        <label style="font-size: 10px; color:#888;">THEME COLOR</label><br>
+        <input type="color" id="theme-picker" value="#ff0000" onchange="applyTheme()">
+        <button onclick="toggleSettings()" style="width:100%; margin-top:10px; background:var(--theme); border:none; color:#fff; cursor:pointer;">Save</button>
+    </div>
+
+    <div id="toolbar">
+        <div style="cursor:pointer;" onclick="toggleSettings()">⚙️</div>
+        <div class="address-bar">
+            <input type="text" id="search-input" placeholder="Search DuckDuckGo or enter URL...">
+        </div>
+        <button class="mirror-btn" onclick="launch('mirror')">Mirror 2</button>
+        <div style="font-size: 10px; color: #666; margin-left:10px;">` to Panic</div>
+    </div>
+
+    <iframe id="frame"></iframe>
 
     <script>
-        const input = document.getElementById('search-input');
-        const frame = document.getElementById('proxy-frame');
-        const ui = document.getElementById('ui-layer');
+        const pass = "sammy@sab2026";
+        let lastQuery = "";
 
-        // Logic for Search
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = input.value.trim();
-                if (query) launch(query);
+        // 🚨 PANIC (Backtick `)
+        window.addEventListener('keydown', (e) => { 
+            if (e.code === 'Backquote') window.location.replace(document.getElementById('panic-url').value); 
+        });
+
+        function applyTheme() {
+            document.documentElement.style.setProperty('--theme', document.getElementById('theme-picker').value);
+        }
+
+        function toggleSettings() {
+            const s = document.getElementById('settings');
+            s.style.display = s.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.getElementById('pass-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.value === pass) {
+                document.getElementById('ui').style.display = "none";
+                document.getElementById('toolbar').style.display = "flex";
+                document.getElementById('frame').style.display = "block";
+                document.getElementById('search-input').focus();
             }
         });
 
-        // FIXED PANIC KEY (Backtick `)
-        // This set of listeners ensures the key works even if the iframe is focused
-        const panic = () => window.location.replace("https://classroom.google.com");
-
-        window.addEventListener('keydown', (e) => { if (e.code === 'Backquote') panic(); });
-
-        // Focus-Fix: If the user clicks the proxy, we check for the panic key periodically
-        setInterval(() => {
-            if (document.activeElement === frame) {
-                // If the iframe is focused, we steal focus back for a split second 
-                // to catch the keypress, then give it back.
-                window.focus();
+        document.getElementById('search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.value.trim()) {
+                lastQuery = e.target.value.trim();
+                launch('primary');
             }
-        }, 500);
+        });
 
-        function launch(query) {
+        function launch(mode) {
+            if (!lastQuery) return;
             let target;
-            if (query.includes('.') && !query.includes(' ')) {
-                target = query.startsWith('http') ? query : 'https://' + query;
+            
+            // Logic: Is it a URL or a search?
+            if (lastQuery.includes('.') && !lastQuery.includes(' ')) {
+                target = lastQuery.startsWith('http') ? lastQuery : 'https://' + lastQuery;
             } else {
-                target = "https://duckduckgo.com" + encodeURIComponent(query);
+                // Default Engine: DuckDuckGo (Harder to block, less "Refused Connection")
+                target = "https://duckduckgo.com" + encodeURIComponent(lastQuery);
             }
 
-            // NEW 2026 GATEWAY (Updated to bypass DNS "IP not found" errors)
-            const proxyBase = "https://uv.student-portal.cloud"; 
-            
-            ui.style.display = "none";
-            frame.style.display = "block";
-            frame.src = proxyBase + btoa(target).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
-            document.title = "Home - Classroom";
+            // AUTO-CLOAK
+            const domain = target.includes('duckduckgo') ? "DuckDuckGo" : lastQuery;
+            document.getElementById('tab-title').innerText = "Research - " + domain;
+            document.getElementById('tab-icon').href = "https://www.google.com" + target;
+
+            // BYPASS LOGIC
+            let finalUrl;
+            if (mode === 'primary') {
+                // Method 1: Google Translate Bridge (Bypasses iBoss)
+                finalUrl = "https://translate.google.com" + encodeURIComponent(target);
+            } else {
+                // Method 2: Google Web Cache Mirror (For sites that block Translate)
+                finalUrl = "https://webcache.googleusercontent.com:" + encodeURIComponent(target);
+            }
+
+            document.getElementById('frame').src = finalUrl;
         }
     </script>
 </body>
