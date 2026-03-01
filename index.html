@@ -2,52 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SpyderSammy - Search</title>
+    <title>Home - Classroom</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; width: 100%; max-width: 600px; padding: 20px; }
-        .logo { width: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 10px #ff0000); }
-        h1 { font-size: 3rem; margin-bottom: 20px; color: #ff0000; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px #ff0000; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         
-        .search-wrapper { position: relative; width: 100%; }
-        input {
-            width: 100%; padding: 18px 30px; border-radius: 50px; border: 2px solid #333;
-            background: #111; color: #fff; font-size: 1.2rem; outline: none; transition: 0.4s;
-            box-sizing: border-box;
+        #ui-layer { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; width: 100%; transition: 0.5s; 
         }
-        input:focus { border-color: #ff0000; box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); }
+
+        h1 { font-size: 3.5rem; margin-bottom: 25px; color: #ff0000; text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px #ff0000; cursor: default; }
         
-        .footer { margin-top: 30px; color: #444; font-size: 0.8rem; letter-spacing: 1px; }
+        .search-box { width: 90%; max-width: 700px; }
+        input {
+            width: 100%; padding: 20px 35px; border-radius: 60px; border: 2px solid #222;
+            background: #0a0a0a; color: #fff; font-size: 1.3rem; outline: none; transition: 0.4s;
+            box-sizing: border-box; text-align: center;
+        }
+        input:focus { border-color: #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
+
+        #proxy-frame {
+            display: none; position: fixed; inset: 0; width: 100%; height: 100%;
+            border: none; background: #fff; z-index: 9999;
+        }
+
+        .footer { position: fixed; bottom: 15px; color: #333; font-size: 0.7rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="https://ssl.gstatic.com" class="logo">
-        <h1>SpyderSammy</h1>
-        
-        <div class="search-wrapper">
-            <input type="text" id="search-input" placeholder="Search the web or enter URL..." autofocus>
+    <div id="ui-layer">
+        <h1>SPYDER SAMMY</h1>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search or Enter URL..." autofocus>
         </div>
-
-        <div class="footer">STAY STEALTHY • SPYDERSAMMY PROXY</div>
+        <div class="footer">PRESS ` TO PANIC</div>
     </div>
 
-    <form id="proxy-form" action="https://www.croxyproxy.com_" method="post" target="_blank" style="display:none;">
-        <input type="hidden" name="url" id="proxy-url">
-    </form>
+    <iframe id="proxy-frame"></iframe>
 
     <script>
         const input = document.getElementById('search-input');
+        const frame = document.getElementById('proxy-frame');
+        const ui = document.getElementById('ui-layer');
 
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const query = input.value.trim();
-                if (query) handleSearch(query);
+                if (query) launch(query);
             }
         });
 
-        function handleSearch(query) {
+        // PANIC KEY (Backtick/Tilde `)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Backquote') {
+                // Instantly swap to real Classroom and wipe history entry
+                window.location.replace("https://classroom.google.com");
+            }
+        });
+
+        function launch(query) {
             let targetUrl;
             const isUrl = query.includes('.') && !query.includes(' ');
             
@@ -57,9 +71,13 @@
                 targetUrl = "https://duckduckgo.com" + encodeURIComponent(query);
             }
 
-            // Launching via the proxy form
-            document.getElementById('proxy-url').value = targetUrl;
-            document.getElementById('proxy-form').submit();
+            // Backend Gateway
+            const proxyURL = "https://tachyons.pro" + btoa(targetUrl); 
+
+            ui.style.display = "none";
+            frame.style.display = "block";
+            frame.src = proxyURL;
+            document.title = "Home - Classroom";
         }
     </script>
 </body>
