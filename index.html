@@ -5,113 +5,134 @@
     <title id="tab-title">Home - Classroom</title>
     <link id="tab-icon" rel="icon" href="https://ssl.gstatic.com">
     <style>
-        :root { --theme: #ff0000; }
+        :root { --theme: #ff0000; --panel: #111; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        #ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: relative; background: #000; }
-        h1 { font-size: 3.5rem; margin-bottom: 25px; color: var(--theme); text-transform: uppercase; letter-spacing: 8px; text-shadow: 0 0 20px var(--theme); }
+        
+        #login-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; z-index: 20000; background: #000; }
+        h1 { font-size: 3rem; margin-bottom: 20px; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
         #pass-input { width: 90%; max-width: 400px; padding: 15px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; }
-        
-        /* Chrome Toolbar */
-        #toolbar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #202124; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 15px; z-index: 10001; box-sizing: border-box; }
-        .address-bar { flex-grow: 1; background: #303134; height: 32px; border-radius: 20px; margin: 0 15px; display: flex; align-items: center; padding: 0 10px; }
-        #search-input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 0.9rem; }
-        
-        .mirror-btn { background: #3c4043; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 5px; }
-        .mirror-btn:hover { background: var(--theme); }
 
-        #frame { display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); border: none; z-index: 9999; background: #fff; }
-        #settings { display: none; position: fixed; top: 60px; left: 15px; background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid var(--theme); z-index: 10005; }
+        #browser-ui { display: none; flex-direction: column; height: 100vh; width: 100%; }
+        #toolbar { background: #1a1a1a; border-bottom: 2px solid var(--theme); padding: 6px 12px; display: flex; align-items: center; z-index: 10001; gap: 10px; }
+        
+        #tab-bar { display: flex; overflow-x: auto; gap: 5px; flex-grow: 1; scrollbar-width: none; }
+        .v-tab { background: #252525; padding: 6px 12px; border-radius: 8px 8px 0 0; font-size: 11px; cursor: pointer; display: flex; align-items: center; min-width: 100px; }
+        .v-tab.active { background: #333; border: 1px solid var(--theme); border-bottom: none; }
+        .close-tab { margin-left: 8px; color: #666; }
+
+        .address-bar { background: #252525; height: 30px; border-radius: 20px; display: flex; align-items: center; padding: 0 12px; width: 300px; border: 1px solid #333; }
+        #nav-input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 0.8rem; }
+
+        /* Speed Dial Styling */
+        .speed-dial { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 25px; max-width: 600px; margin-top: 40px; }
+        .sd-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; }
+        .sd-item:hover { transform: scale(1.1); }
+        .sd-icon { width: 60px; height: 60px; border-radius: 15px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 1px solid #333; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .sd-label { font-size: 12px; color: #aaa; font-weight: bold; }
+
+        /* Viewports */
+        #viewports { flex-grow: 1; position: relative; background: #fff; }
+        iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: none; background: #fff; }
+        iframe.active { display: block; }
     </style>
 </head>
 <body>
 
-    <div id="ui">
+    <div id="login-ui">
         <h1>SPYDER SAMMY</h1>
         <input type="password" id="pass-input" placeholder="Enter Access Code..." autofocus>
     </div>
 
-    <div id="settings">
-        <label style="font-size: 10px; color:#888;">PANIC URL</label><br>
-        <input type="text" id="panic-url" value="https://classroom.google.com" style="background:#000; color:#fff; border:1px solid #333; margin-bottom:10px;"><br>
-        <label style="font-size: 10px; color:#888;">THEME COLOR</label><br>
-        <input type="color" id="theme-picker" value="#ff0000" onchange="applyTheme()">
-        <button onclick="toggleSettings()" style="width:100%; margin-top:10px; background:var(--theme); border:none; color:#fff; cursor:pointer;">Save</button>
-    </div>
-
-    <div id="toolbar">
-        <div style="cursor:pointer;" onclick="toggleSettings()">⚙️</div>
-        <div class="address-bar">
-            <input type="text" id="search-input" placeholder="Search DuckDuckGo or enter URL...">
+    <div id="browser-ui">
+        <div id="toolbar">
+            <div id="tab-bar"></div>
+            <button onclick="createNewTab()" style="background:var(--theme); color:#fff; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;">+</button>
+            <div class="address-bar">
+                <input type="text" id="nav-input" placeholder="Search or URL...">
+            </div>
+            <div style="font-size: 10px; color: #666; white-space: nowrap;">` Panic</div>
         </div>
-        <button class="mirror-btn" onclick="launch('mirror')">Mirror 2</button>
-        <div style="font-size: 10px; color: #666; margin-left:10px;">` to Panic</div>
+        <div id="viewports"></div>
     </div>
-
-    <iframe id="frame"></iframe>
 
     <script>
-        const pass = "sammy@sab2026";
-        let lastQuery = "";
+        const PASS = "sammy@sab2026";
+        const PROXY = "https://translate.google.com";
+        let tabs = [], activeTabId = null;
 
-        // 🚨 PANIC (Backtick `)
-        window.addEventListener('keydown', (e) => { 
-            if (e.code === 'Backquote') window.location.replace(document.getElementById('panic-url').value); 
-        });
-
-        function applyTheme() {
-            document.documentElement.style.setProperty('--theme', document.getElementById('theme-picker').value);
-        }
-
-        function toggleSettings() {
-            const s = document.getElementById('settings');
-            s.style.display = s.style.display === 'block' ? 'none' : 'block';
-        }
+        window.addEventListener('keydown', (e) => { if (e.code === 'Backquote') window.location.replace("https://classroom.google.com"); });
 
         document.getElementById('pass-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.target.value === pass) {
-                document.getElementById('ui').style.display = "none";
-                document.getElementById('toolbar').style.display = "flex";
-                document.getElementById('frame').style.display = "block";
-                document.getElementById('search-input').focus();
+            if (e.key === 'Enter' && e.target.value === PASS) {
+                document.getElementById('login-ui').style.display = "none";
+                document.getElementById('browser-ui').style.display = "flex";
+                loadSession();
             }
         });
 
-        document.getElementById('search-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.target.value.trim()) {
-                lastQuery = e.target.value.trim();
-                launch('primary');
-            }
-        });
-
-        function launch(mode) {
-            if (!lastQuery) return;
-            let target;
-            
-            // Logic: Is it a URL or a search?
-            if (lastQuery.includes('.') && !lastQuery.includes(' ')) {
-                target = lastQuery.startsWith('http') ? lastQuery : 'https://' + lastQuery;
-            } else {
-                // Default Engine: DuckDuckGo (Harder to block, less "Refused Connection")
-                target = "https://duckduckgo.com" + encodeURIComponent(lastQuery);
-            }
-
-            // AUTO-CLOAK
-            const domain = target.includes('duckduckgo') ? "DuckDuckGo" : lastQuery;
-            document.getElementById('tab-title').innerText = "Research - " + domain;
-            document.getElementById('tab-icon').href = "https://www.google.com" + target;
-
-            // BYPASS LOGIC
-            let finalUrl;
-            if (mode === 'primary') {
-                // Method 1: Google Translate Bridge (Bypasses iBoss)
-                finalUrl = "https://translate.google.com" + encodeURIComponent(target);
-            } else {
-                // Method 2: Google Web Cache Mirror (For sites that block Translate)
-                finalUrl = "https://webcache.googleusercontent.com:" + encodeURIComponent(target);
-            }
-
-            document.getElementById('frame').src = finalUrl;
+        function createNewTab(url = 'home', title = 'New Tab', id = 'tab-' + Date.now()) {
+            const tabObj = { id, url, title };
+            tabs.push(tabObj);
+            const ifr = document.createElement('iframe');
+            ifr.id = 'frame-' + id;
+            if (url === 'home') {
+                ifr.srcdoc = `
+                <body style="background:#000; color:#fff; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
+                    <h1 style="color:red; text-shadow:0 0 10px red; letter-spacing:5px;">SPYDER SAMMY</h1>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:20px; margin-top:30px;">
+                        <div onclick="parent.launchFromSD('roblox.com')" style="cursor:pointer; text-align:center;"><div style="width:60px; height:60px; background:#1a1a1a; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid #333; margin-bottom:8px;">🟥</div><span style="font-size:12px; color:#888;">Roblox</span></div>
+                        <div onclick="parent.launchFromSD('discord.com')" style="cursor:pointer; text-align:center;"><div style="width:60px; height:60px; background:#1a1a1a; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid #333; margin-bottom:8px;">🔹</div><span style="font-size:12px; color:#888;">Discord</span></div>
+                        <div onclick="parent.launchFromSD('youtube.com')" style="cursor:pointer; text-align:center;"><div style="width:60px; height:60px; background:#1a1a1a; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid #333; margin-bottom:8px;">🔴</div><span style="font-size:12px; color:#888;">YouTube</span></div>
+                        <div onclick="parent.launchFromSD('tiktok.com')" style="cursor:pointer; text-align:center;"><div style="width:60px; height:60px; background:#1a1a1a; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid #333; margin-bottom:8px;">🎵</div><span style="font-size:12px; color:#888;">TikTok</span></div>
+                    </div>
+                </body>`;
+            } else { ifr.src = PROXY + encodeURIComponent(url); }
+            document.getElementById('viewports').appendChild(ifr);
+            switchTab(id);
         }
+
+        function switchTab(id) {
+            activeTabId = id;
+            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+            document.getElementById('frame-' + id).classList.add('active');
+            renderTabs();
+            saveSession();
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('tab-bar');
+            container.innerHTML = '';
+            tabs.forEach(t => {
+                const div = document.createElement('div');
+                div.className = `v-tab ${t.id === activeTabId ? 'active' : ''}`;
+                div.onclick = () => switchTab(t.id);
+                div.innerHTML = `<span>${t.title}</span><div style="margin-left:8px;" onclick="closeTab(event,'${t.id}')">×</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function launchFromSD(url) {
+            const target = 'https://' + url;
+            const activeTab = tabs.find(t => t.id === activeTabId);
+            activeTab.url = target; activeTab.title = url;
+            document.getElementById('frame-' + activeTabId).src = PROXY + encodeURIComponent(target);
+            renderTabs(); saveSession();
+        }
+
+        function closeTab(e, id) { e.stopPropagation(); if (tabs.length <= 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById('frame-' + id).remove(); switchTab(tabs[tabs.length-1].id); }
+        
+        document.getElementById('nav-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const v = e.target.value.trim();
+                const target = v.includes('.') ? (v.startsWith('http') ? v : 'https://' + v) : "https://duckduckgo.com" + encodeURIComponent(v);
+                launchFromSD(target.replace('https://',''));
+            }
+        });
+
+        function saveSession() { localStorage.setItem('spydersammy_tabs', JSON.stringify(tabs)); }
+        function loadSession() { const s = localStorage.getItem('spydersammy_tabs'); if(s) { JSON.parse(s).forEach(t => createNewTab(t.url, t.title, t.id)); } else { createNewTab(); } }
+
+        setInterval(() => { document.title = "Home - Classroom"; }, 500);
     </script>
 </body>
 </html>
