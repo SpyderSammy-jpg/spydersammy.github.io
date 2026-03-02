@@ -7,86 +7,59 @@
     <style>
         :root { --theme: #ff0000; --wiki-bg: #f6f6f6; --wiki-text: #202122; --wiki-border: #a2a9b1; }
         .dark-wiki { --wiki-bg: #1a1a1a; --wiki-text: #eaecf0; --wiki-border: #3c3f43; }
-        
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        
         #login-ui, #home-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; background: #000; z-index: 20; }
         #home-ui { display: none; z-index: 10; }
-        
-        h1 { font-size: 3rem; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
-        .main-input { width: 90%; max-width: 600px; padding: 15px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; font-size: 1.1rem; }
-        
+        h1 { font-size: 3.5rem; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
+        .main-input { width: 90%; max-width: 600px; padding: 18px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; font-size: 1.2rem; }
         #toolbar { display: none; position: fixed; top: 0; width: 100%; height: 50px; background: #1a1a1a; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 15px; z-index: 10001; box-sizing: border-box; }
-        #bm-bar { display: none; background: #111; height: 35px; padding: 0 15px; align-items: center; border-bottom: 1px solid #333; z-index: 10000; }
+        #bm-bar { display: none; background: #111; height: 35px; padding: 0 15px; align-items: center; border-bottom: 1px solid #333; z-index: 10000; overflow-x: auto; white-space: nowrap; }
         #frame { display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); border: none; z-index: 999; background: #fff; }
-
-        /* 🔎 ENHANCED WIKIPEDIA CLONE */
-        #wiki-stealth { display: none; position: fixed; inset: 0; background: var(--wiki-bg); color: var(--wiki-text); z-index: 50000; overflow-y: auto; padding: 0; font-family: sans-serif; text-align: left; transition: background 0.3s; }
+        /* Wiki Clone Styles */
+        #wiki-stealth { display: none; position: fixed; inset: 0; background: var(--wiki-bg); color: var(--wiki-text); z-index: 50000; overflow-y: auto; font-family: sans-serif; }
         .wiki-header { background: var(--wiki-bg); border-bottom: 1px solid var(--wiki-border); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; }
-        .wiki-search-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 10px; display: flex; align-items: center; border-radius: 2px; width: 250px; }
-        .wiki-search-box input { border: none; outline: none; font-size: 13px; width: 100%; color: #000; }
-        
-        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; }
-        .wiki-content h1 { font-family: 'Linux Libertine','Georgia','Times',serif; color: var(--wiki-text); border-bottom: 1px solid var(--wiki-border); font-size: 1.8rem; text-transform: none; text-shadow: none; letter-spacing: normal; margin-bottom: 5px; }
-        .wiki-content p { line-height: 1.6; font-size: 0.95rem; }
         .wiki-btn { color: #0645ad; cursor: pointer; text-decoration: none; font-weight: bold; }
-        
-        .wiki-tools { font-size: 12px; color: var(--wiki-border); display: flex; gap: 15px; }
     </style>
 </head>
-<body id="master-body">
+<body>
 
     <div id="login-ui">
         <h1>SPYDER SAMMY</h1>
         <input type="password" id="pass-input" class="main-input" placeholder="Enter Access Code..." autofocus>
     </div>
 
-    <!-- 📚 WIKIPEDIA STEALTH WITH DARK MODE -->
+    <div id="home-ui">
+        <h1>SPYDER SAMMY</h1>
+        <input type="text" id="home-search" class="main-input" placeholder="Search DuckDuckGo or Type URL...">
+    </div>
+
+    <!-- Wikipedia Replica -->
     <div id="wiki-stealth">
         <div class="wiki-header">
             <div style="display:flex; align-items:center;">
                 <span onclick="toggleStealth()" style="font-size: 20px; margin-right: 20px; color:var(--wiki-text); cursor:pointer;">☰</span>
-                <img src="https://en.wikipedia.org" height="22" style="cursor:pointer; filter: grayscale(1);" onclick="toggleStealth()">
+                <img src="https://en.wikipedia.org" height="22">
             </div>
-            <div style="display:flex; align-items:center; gap: 20px;">
-                <div class="wiki-tools">
-                    <span onclick="toggleWikiDark()" style="cursor:pointer; color: #0645ad;">🌓 Toggle Dark Mode</span>
-                    <span>Not logged in</span>
-                    <span style="color: #0645ad;">Talk</span>
-                    <span style="color: #0645ad;">Contributions</span>
-                </div>
-                <div class="wiki-search-box">
-                    <input type="text" id="wiki-search-input" placeholder="Search Wikipedia">
-                    <span>🔍</span>
-                </div>
+            <div style="display:flex; gap: 15px; font-size: 12px;">
+                <span onclick="toggleWikiDark()" style="cursor:pointer; color: #0645ad;">Dark Mode</span>
+                <input type="text" id="wiki-search-input" placeholder="Search Wikipedia" style="border: 1px solid #aaa; padding: 2px 5px;">
             </div>
         </div>
-        <div class="wiki-container">
-            <div class="wiki-content">
-                <h1>Photosynthesis</h1>
-                <p>From Wikipedia, the free encyclopedia</p>
-                <p><b>Photosynthesis</b> is a biological process used by many organisms to convert light energy into chemical energy, which is stored in organic compounds that can later be metabolized through cellular respiration to fuel the organism's activities.</p>
-                <p>The term usually refers to <b>oxygenic photosynthesis</b>, where oxygen is produced as a byproduct from water. Photosynthesis is responsible for maintaining the oxygen content of Earth's atmosphere and supplies most of the biological energy necessary for complex life.</p>
-                <h2 style="border-bottom: 1px solid var(--wiki-border); font-family:serif;">Molecular Mechanisms</h2>
-                <p>In plants and algae, photosynthesis takes place in organelles called chloroplasts. A typical plant cell contains about 10 to 100 chloroplasts. The chloroplast is enclosed by a double membrane.</p>
-            </div>
+        <div style="max-width: 1000px; margin: 0 auto; padding: 40px; text-align: left;">
+            <h1 style="font-family: serif; border-bottom: 1px solid #aaa; font-size: 2rem;">Photosynthesis</h1>
+            <p><b>Photosynthesis</b> is a process used by plants and other organisms to convert light energy into chemical energy...</p>
         </div>
-    </div>
-
-    <div id="home-ui">
-        <h1>SPYDER SAMMY</h1>
-        <input type="text" id="home-search" class="main-input" placeholder="Search or Type URL...">
     </div>
 
     <div id="toolbar">
         <div style="flex:1; display:flex; align-items:center;">
-            <span onclick="toggleStealth()" style="margin-right:15px; font-weight:bold; color:#fff; background:#444; padding:2px 10px; border-radius:4px; cursor:pointer; font-family:serif;">W</span>
-            <input type="text" id="nav-input" style="width:70%; background:#252525; border:none; border-radius:15px; padding:5px 15px; color:#fff; outline:none;" placeholder="Navigate...">
+            <span onclick="toggleStealth()" style="margin-right:15px; font-weight:bold; color:#fff; background:#444; padding:2px 10px; border-radius:4px; cursor:pointer;">W</span>
+            <input type="text" id="nav-input" style="width:75%; background:#252525; border:none; border-radius:15px; padding:6px 15px; color:#fff; outline:none;" placeholder="Navigate...">
         </div>
-        <div style="font-size:10px; color:#555; display:flex; gap:10px;">
+        <div style="font-size:10px; color:#555; gap:10px; display:flex;">
             <span>CTRL+J (Save)</span>
             <span>CTRL+3 (History)</span>
-            <span onclick="toggleNightFilter()" style="cursor:pointer; color:var(--theme);">[NIGHT FILTER]</span>
+            <span>` (Panic)</span>
         </div>
     </div>
 
@@ -95,38 +68,28 @@
 
     <script>
         const PASS = "sammy@sab2026";
-        const PROXY_MIRROR = "https://algebra.mrhacker.net";
+        // New UV Proxy Mirror (Direct Node)
+        const PROXY_MIRROR = "https://uv.student-portal.cloud";
         
         let history = JSON.parse(localStorage.getItem('spy_h') || "[]");
         let bookmarks = JSON.parse(localStorage.getItem('spy_b') || "[]");
-        let nightMode = false;
 
+        // ⌨️ Shortcuts: Ctrl+3 (History) & Ctrl+J (Bookmark)
         window.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === '3') { e.preventDefault(); alert("History:\n" + history.map(h => h.t).join("\n")); }
             if (e.ctrlKey && e.key.toLowerCase() === 'j') { e.preventDefault(); addBookmark(); }
             if (e.code === 'Backquote') window.location.replace("https://classroom.google.com");
         });
 
-        function toggleStealth() {
-            const w = document.getElementById('wiki-stealth');
-            w.style.display = (w.style.display === 'block') ? 'none' : 'block';
-        }
+        function toggleStealth() { document.getElementById('wiki-stealth').style.display = (document.getElementById('wiki-stealth').style.display === 'block') ? 'none' : 'block'; }
+        function toggleWikiDark() { document.getElementById('wiki-stealth').classList.toggle('dark-wiki'); }
 
-        function toggleWikiDark() {
-            document.getElementById('wiki-stealth').classList.toggle('dark-wiki');
+        // 🚀 THE FIX: Correct XOR/Base64 UV Encoding
+        function encodeUV(url) {
+            if (!url) return "";
+            return btoa(encodeURIComponent(url.split('').map((char, ind) => ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char).join('')))
+                .replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
         }
-
-        function toggleNightFilter() {
-            nightMode = !nightMode;
-            document.getElementById('master-body').style.filter = nightMode ? "brightness(0.6) sepia(0.2)" : "none";
-        }
-
-        document.getElementById('wiki-search-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                launch("https://en.wikipedia.org" + e.target.value);
-                toggleStealth();
-            }
-        });
 
         function launch(query) {
             if (!query) return;
@@ -134,15 +97,27 @@
                 (query.startsWith('http') ? query : 'https://' + query) : 
                 "https://duckduckgo.com" + encodeURIComponent(query);
             
-            const encoded = btoa(target).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
-            
             document.getElementById('home-ui').style.display = "none";
             document.getElementById('frame').style.display = "block";
-            document.getElementById('frame').src = PROXY_MIRROR + encoded;
+            document.getElementById('frame').src = PROXY_MIRROR + encodeUV(target);
             
             history.unshift({t: query, u: target});
             localStorage.setItem('spy_h', JSON.stringify(history.slice(0, 15)));
             document.title = "Home - Classroom";
+        }
+
+        function addBookmark() {
+            const val = document.getElementById('nav-input').value || document.getElementById('home-search').value || "New Page";
+            bookmarks.push({t: val, u: val});
+            localStorage.setItem('spy_b', JSON.stringify(bookmarks));
+            renderBookmarks();
+            alert("Bookmark Saved: " + val);
+        }
+
+        function renderBookmarks() {
+            const bar = document.getElementById('bm-bar');
+            bar.style.display = bookmarks.length ? "flex" : "none";
+            bar.innerHTML = bookmarks.map(b => `<div class="bm-link" onclick="launch('${b.u}')" style="color:#aaa; font-size:11px; margin-right:15px; cursor:pointer;">⭐ ${b.t}</div>`).join('');
         }
 
         document.getElementById('pass-input').addEventListener('keydown', (e) => {
@@ -154,21 +129,10 @@
             }
         });
 
-        function addBookmark() {
-            const val = document.getElementById('nav-input').value || document.getElementById('home-search').value || "New Tab";
-            bookmarks.push({t: val, u: val});
-            localStorage.setItem('spy_b', JSON.stringify(bookmarks));
-            renderBookmarks();
-        }
-
-        function renderBookmarks() {
-            const bar = document.getElementById('bm-bar');
-            bar.style.display = bookmarks.length ? "flex" : "none";
-            bar.innerHTML = bookmarks.map(b => `<div class="bm-link" onclick="launch('${b.u}')" style="color:#aaa; font-size:11px; margin-right:15px; cursor:pointer; display:inline-block;">⭐ ${b.t}</div>`).join('');
-        }
-
         document.getElementById('home-search').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
         document.getElementById('nav-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
+        document.getElementById('wiki-search-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { launch("https://en.wikipedia.org" + e.target.value); toggleStealth(); } });
+        
         setInterval(() => { document.title = "Home - Classroom"; }, 500);
     </script>
 </body>
