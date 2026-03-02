@@ -5,102 +5,106 @@
     <title id="tab-title">Home - Classroom</title>
     <link id="tab-icon" rel="icon" href="https://ssl.gstatic.com">
     <style>
-        :root { --theme: #ff0000; --ghost: #8a2be2; --bg: #000; --panel: #111; }
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        :root { --theme: #ff0000; --wiki-bg: #f6f6f6; --wiki-text: #202122; --wiki-border: #a2a9b1; }
+        .dark-wiki { --wiki-bg: #1a1a1a; --wiki-text: #eaecf0; --wiki-border: #3c3f43; }
         
-        #login-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; z-index: 30000; background: #000; }
-        h1 { font-size: 3rem; margin-bottom: 20px; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
-        #pass-input { width: 90%; max-width: 400px; padding: 15px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; }
-
-        #browser-ui { display: none; flex-direction: column; height: 100vh; width: 100%; }
-        #toolbar { background: #1a1a1a; border-bottom: 2px solid var(--theme); padding: 6px 12px; display: flex; align-items: center; z-index: 10001; gap: 10px; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         
-        #tab-bar { display: flex; overflow-x: auto; gap: 5px; flex-grow: 1; scrollbar-width: none; }
-        .v-tab { background: #252525; padding: 6px 12px; border-radius: 8px 8px 0 0; font-size: 11px; cursor: pointer; display: flex; align-items: center; min-width: 100px; border: 1px solid transparent; }
-        .v-tab.active { background: #333; border: 1px solid var(--theme); border-bottom: none; }
-
-        .address-bar { background: #252525; height: 32px; border-radius: 20px; display: flex; align-items: center; padding: 0 12px; width: 280px; border: 1px solid #333; }
-        #nav-input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 0.8rem; }
-
-        .icon-btn { cursor: pointer; font-size: 18px; transition: 0.3s; user-select: none; display: flex; align-items: center; }
-        #ghost-circle { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #555; transition: 0.3s; }
-        #ghost-circle.active { background: var(--ghost); border-color: var(--ghost); box-shadow: 0 0 10px var(--ghost); }
-
-        /* Fake Wiki Stealth Page */
-        #wiki-stealth { display: none; position: fixed; inset: 0; background: #fff; color: #000; z-index: 50000; overflow-y: auto; padding: 40px; font-family: 'serif'; text-align: left; }
-        #wiki-stealth h2 { border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; }
-
-        #side-panel { display: none; position: fixed; top: 50px; left: 0; bottom: 0; width: 250px; background: var(--panel); border-right: 1px solid var(--theme); z-index: 10005; padding: 15px; box-sizing: border-box; overflow-y: auto; }
-        .h-item { font-size: 11px; padding: 8px; border-bottom: 1px solid #222; cursor: pointer; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #login-ui, #home-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; background: #000; z-index: 20; }
+        #home-ui { display: none; z-index: 10; }
         
-        #settings-ui { display: none; position: fixed; top: 60px; right: 20px; background: #111; border: 1px solid var(--theme); padding: 20px; border-radius: 12px; z-index: 20000; width: 260px; }
-        .s-item { margin-bottom: 12px; font-size: 11px; color: #888; text-transform: uppercase; }
-        .s-item select, .s-item input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; margin-top: 5px; outline: none; }
+        h1 { font-size: 3rem; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
+        .main-input { width: 90%; max-width: 600px; padding: 15px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; font-size: 1.1rem; }
+        
+        #toolbar { display: none; position: fixed; top: 0; width: 100%; height: 50px; background: #1a1a1a; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 15px; z-index: 10001; box-sizing: border-box; }
+        #bm-bar { display: none; background: #111; height: 35px; padding: 0 15px; align-items: center; border-bottom: 1px solid #333; z-index: 10000; }
+        #frame { display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); border: none; z-index: 999; background: #fff; }
 
-        #viewports { flex-grow: 1; position: relative; background: #fff; }
-        iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: none; background: #fff; }
-        iframe.active { display: block; }
+        /* 🔎 ENHANCED WIKIPEDIA CLONE */
+        #wiki-stealth { display: none; position: fixed; inset: 0; background: var(--wiki-bg); color: var(--wiki-text); z-index: 50000; overflow-y: auto; padding: 0; font-family: sans-serif; text-align: left; transition: background 0.3s; }
+        .wiki-header { background: var(--wiki-bg); border-bottom: 1px solid var(--wiki-border); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; }
+        .wiki-search-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 10px; display: flex; align-items: center; border-radius: 2px; width: 250px; }
+        .wiki-search-box input { border: none; outline: none; font-size: 13px; width: 100%; color: #000; }
+        
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; }
+        .wiki-content h1 { font-family: 'Linux Libertine','Georgia','Times',serif; color: var(--wiki-text); border-bottom: 1px solid var(--wiki-border); font-size: 1.8rem; text-transform: none; text-shadow: none; letter-spacing: normal; margin-bottom: 5px; }
+        .wiki-content p { line-height: 1.6; font-size: 0.95rem; }
+        .wiki-btn { color: #0645ad; cursor: pointer; text-decoration: none; font-weight: bold; }
+        
+        .wiki-tools { font-size: 12px; color: var(--wiki-border); display: flex; gap: 15px; }
     </style>
 </head>
-<body>
+<body id="master-body">
 
-    <!-- 1. Login -->
     <div id="login-ui">
         <h1>SPYDER SAMMY</h1>
-        <input type="password" id="pass-input" placeholder="Enter Access Code..." autofocus>
+        <input type="password" id="pass-input" class="main-input" placeholder="Enter Access Code..." autofocus>
     </div>
 
-    <!-- 2. Fake Wiki Stealth Layer -->
-    <div id="wiki-stealth" onclick="event.stopPropagation()">
-        <span onclick="toggleStealth()" style="cursor:pointer; font-weight:bold; font-size:24px; color:#3366cc; font-family:sans-serif;">W</span>
-        <hr>
-        <h1>Photosynthesis</h1>
-        <p>From Wikipedia, the free encyclopedia</p>
-        <p><b>Photosynthesis</b> is a process used by plants and other organisms to convert light energy into chemical energy that, through cellular respiration, can later be released to fuel the organism's activities.</p>
-        <h2>Overview</h2>
-        <p>Photosynthetic organisms are photoautotrophs, which means that they are able to synthesize food directly from carbon dioxide and water using energy from light. However, not all organisms use carbon dioxide as a source of carbon atoms to carry out photosynthesis.</p>
-        <p>In plants, algae, and cyanobacteria, photosynthesis releases oxygen. This is called oxygenic photosynthesis and is by far the most common type of photosynthesis used by living organisms.</p>
-    </div>
-
-    <div id="settings-ui">
-        <div class="s-item"><label>Mirror</label>
-            <select id="mirror-select" onchange="saveConfig()">
-                <option value="https://uv.student-portal.cloud">Mirror 1 (Primary)</option>
-                <option value="https://algebra.mrhacker.net">Mirror 2 (Backup)</option>
-            </select>
-        </div>
-        <div class="s-item"><label>Panic URL</label><input type="text" id="panic-url" value="https://classroom.google.com" onchange="saveConfig()"></div>
-        <div class="s-item"><label>Theme Color</label><input type="color" id="theme-picker" value="#ff0000" onchange="applyTheme()"></div>
-        <button onclick="clearHistory()" style="width:100%; background:#333; color:#fff; border:none; padding:8px; cursor:pointer; margin-bottom:5px;">Clear History</button>
-        <button onclick="toggleSettings()" style="width:100%; background:var(--theme); color:#fff; border:none; padding:10px; cursor:pointer; font-weight:bold;">CLOSE</button>
-    </div>
-
-    <div id="side-panel">
-        <h3 style="font-size:12px; color:var(--theme); margin-top:0;">HISTORY</h3>
-        <div id="history-list"></div>
-    </div>
-
-    <div id="browser-ui">
-        <div id="toolbar">
-            <div class="icon-btn" onclick="toggleStealth()" title="Stealth Mode" style="font-weight:bold; font-family:serif; color:#fff; background:#444; padding:0 8px; border-radius:4px;">W</div>
-            <div id="tab-bar"></div>
-            <button onclick="createNewTab()" style="background:var(--theme); color:#fff; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;">+</button>
-            <div class="address-bar">
-                <input type="text" id="nav-input" placeholder="Search or URL...">
-                <div class="icon-btn" onclick="toggleSettings()" style="font-size:14px; margin-left:8px;">⚙️</div>
+    <!-- 📚 WIKIPEDIA STEALTH WITH DARK MODE -->
+    <div id="wiki-stealth">
+        <div class="wiki-header">
+            <div style="display:flex; align-items:center;">
+                <span onclick="toggleStealth()" style="font-size: 20px; margin-right: 20px; color:var(--wiki-text); cursor:pointer;">☰</span>
+                <img src="https://en.wikipedia.org" height="22" style="cursor:pointer; filter: grayscale(1);" onclick="toggleStealth()">
             </div>
-            <div id="ghost-circle" class="icon-btn" onclick="toggleGhost()"></div>
-            <div style="font-size: 10px; color: #666; margin-left:10px;">` Panic</div>
+            <div style="display:flex; align-items:center; gap: 20px;">
+                <div class="wiki-tools">
+                    <span onclick="toggleWikiDark()" style="cursor:pointer; color: #0645ad;">🌓 Toggle Dark Mode</span>
+                    <span>Not logged in</span>
+                    <span style="color: #0645ad;">Talk</span>
+                    <span style="color: #0645ad;">Contributions</span>
+                </div>
+                <div class="wiki-search-box">
+                    <input type="text" id="wiki-search-input" placeholder="Search Wikipedia">
+                    <span>🔍</span>
+                </div>
+            </div>
         </div>
-        <div id="viewports"></div>
+        <div class="wiki-container">
+            <div class="wiki-content">
+                <h1>Photosynthesis</h1>
+                <p>From Wikipedia, the free encyclopedia</p>
+                <p><b>Photosynthesis</b> is a biological process used by many organisms to convert light energy into chemical energy, which is stored in organic compounds that can later be metabolized through cellular respiration to fuel the organism's activities.</p>
+                <p>The term usually refers to <b>oxygenic photosynthesis</b>, where oxygen is produced as a byproduct from water. Photosynthesis is responsible for maintaining the oxygen content of Earth's atmosphere and supplies most of the biological energy necessary for complex life.</p>
+                <h2 style="border-bottom: 1px solid var(--wiki-border); font-family:serif;">Molecular Mechanisms</h2>
+                <p>In plants and algae, photosynthesis takes place in organelles called chloroplasts. A typical plant cell contains about 10 to 100 chloroplasts. The chloroplast is enclosed by a double membrane.</p>
+            </div>
+        </div>
     </div>
+
+    <div id="home-ui">
+        <h1>SPYDER SAMMY</h1>
+        <input type="text" id="home-search" class="main-input" placeholder="Search or Type URL...">
+    </div>
+
+    <div id="toolbar">
+        <div style="flex:1; display:flex; align-items:center;">
+            <span onclick="toggleStealth()" style="margin-right:15px; font-weight:bold; color:#fff; background:#444; padding:2px 10px; border-radius:4px; cursor:pointer; font-family:serif;">W</span>
+            <input type="text" id="nav-input" style="width:70%; background:#252525; border:none; border-radius:15px; padding:5px 15px; color:#fff; outline:none;" placeholder="Navigate...">
+        </div>
+        <div style="font-size:10px; color:#555; display:flex; gap:10px;">
+            <span>CTRL+J (Save)</span>
+            <span>CTRL+3 (History)</span>
+            <span onclick="toggleNightFilter()" style="cursor:pointer; color:var(--theme);">[NIGHT FILTER]</span>
+        </div>
+    </div>
+
+    <div id="bm-bar"></div>
+    <iframe id="frame"></iframe>
 
     <script>
         const PASS = "sammy@sab2026";
-        let tabs = [], activeTabId = null, ghostMode = false, historyData = [];
+        const PROXY_MIRROR = "https://algebra.mrhacker.net";
+        
+        let history = JSON.parse(localStorage.getItem('spy_h') || "[]");
+        let bookmarks = JSON.parse(localStorage.getItem('spy_b') || "[]");
+        let nightMode = false;
 
-        window.addEventListener('keydown', (e) => { 
-            if (e.code === 'Backquote') window.location.replace(document.getElementById('panic-url').value); 
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === '3') { e.preventDefault(); alert("History:\n" + history.map(h => h.t).join("\n")); }
+            if (e.ctrlKey && e.key.toLowerCase() === 'j') { e.preventDefault(); addBookmark(); }
+            if (e.code === 'Backquote') window.location.replace("https://classroom.google.com");
         });
 
         function toggleStealth() {
@@ -108,109 +112,63 @@
             w.style.display = (w.style.display === 'block') ? 'none' : 'block';
         }
 
-        function toggleHistory() {
-            const p = document.getElementById('side-panel');
-            p.style.display = p.style.display === 'block' ? 'none' : 'block';
-            renderHistory();
+        function toggleWikiDark() {
+            document.getElementById('wiki-stealth').classList.toggle('dark-wiki');
         }
 
-        function toggleSettings() {
-            const s = document.getElementById('settings-ui');
-            s.style.display = s.style.display === 'block' ? 'none' : 'block';
+        function toggleNightFilter() {
+            nightMode = !nightMode;
+            document.getElementById('master-body').style.filter = nightMode ? "brightness(0.6) sepia(0.2)" : "none";
         }
 
-        function applyTheme() {
-            const color = document.getElementById('theme-picker').value;
-            document.documentElement.style.setProperty('--theme', color);
-            saveConfig();
-        }
+        document.getElementById('wiki-search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                launch("https://en.wikipedia.org" + e.target.value);
+                toggleStealth();
+            }
+        });
 
-        function saveConfig() {
-            if (ghostMode) return;
-            const config = { theme: document.getElementById('theme-picker').value, panic: document.getElementById('panic-url').value, mirror: document.getElementById('mirror-select').value };
-            localStorage.setItem('spyder_config', JSON.stringify(config));
-        }
-
-        function toggleGhost() {
-            ghostMode = !ghostMode;
-            document.getElementById('ghost-circle').classList.toggle('active');
-            if (ghostMode) { localStorage.removeItem('spyder_tabs'); localStorage.removeItem('spyder_history'); }
+        function launch(query) {
+            if (!query) return;
+            let target = query.includes('.') && !query.includes(' ') ? 
+                (query.startsWith('http') ? query : 'https://' + query) : 
+                "https://duckduckgo.com" + encodeURIComponent(query);
+            
+            const encoded = btoa(target).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
+            
+            document.getElementById('home-ui').style.display = "none";
+            document.getElementById('frame').style.display = "block";
+            document.getElementById('frame').src = PROXY_MIRROR + encoded;
+            
+            history.unshift({t: query, u: target});
+            localStorage.setItem('spy_h', JSON.stringify(history.slice(0, 15)));
+            document.title = "Home - Classroom";
         }
 
         document.getElementById('pass-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && e.target.value === PASS) {
                 document.getElementById('login-ui').style.display = "none";
-                document.getElementById('browser-ui').style.display = "flex";
-                const saved = localStorage.getItem('spyder_config');
-                if (saved) {
-                    const c = JSON.parse(saved);
-                    document.getElementById('theme-picker').value = c.theme;
-                    document.getElementById('panic-url').value = c.panic;
-                    document.getElementById('mirror-select').value = c.mirror;
-                    document.documentElement.style.setProperty('--theme', c.theme);
-                }
-                const h = localStorage.getItem('spyder_history');
-                if (h) historyData = JSON.parse(h);
-                loadSession();
+                document.getElementById('home-ui').style.display = "flex";
+                document.getElementById('toolbar').style.display = "flex";
+                renderBookmarks();
             }
         });
 
-        function createNewTab(url = 'home', title = 'New Tab', id = 'tab-' + Date.now()) {
-            const tabObj = { id, url, title };
-            tabs.push(tabObj);
-            const ifr = document.createElement('iframe');
-            ifr.id = 'frame-' + id;
-            if (url === 'home') ifr.srcdoc = `<body style="background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;"><h1>SPYDER SAMMY</h1></body>`;
-            else ifr.src = document.getElementById('mirror-select').value + btoa(url).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
-            document.getElementById('viewports').appendChild(ifr);
-            switchTab(id);
+        function addBookmark() {
+            const val = document.getElementById('nav-input').value || document.getElementById('home-search').value || "New Tab";
+            bookmarks.push({t: val, u: val});
+            localStorage.setItem('spy_b', JSON.stringify(bookmarks));
+            renderBookmarks();
         }
 
-        function switchTab(id) {
-            activeTabId = id;
-            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
-            document.getElementById('frame-' + id).classList.add('active');
-            const t = tabs.find(x => x.id === id);
-            document.getElementById('nav-input').value = (t.url === 'home') ? '' : t.url;
-            renderTabs();
-            saveSession();
+        function renderBookmarks() {
+            const bar = document.getElementById('bm-bar');
+            bar.style.display = bookmarks.length ? "flex" : "none";
+            bar.innerHTML = bookmarks.map(b => `<div class="bm-link" onclick="launch('${b.u}')" style="color:#aaa; font-size:11px; margin-right:15px; cursor:pointer; display:inline-block;">⭐ ${b.t}</div>`).join('');
         }
 
-        function renderTabs() {
-            const c = document.getElementById('tab-bar'); c.innerHTML = '';
-            tabs.forEach(t => {
-                const d = document.createElement('div');
-                d.className = `v-tab ${t.id === activeTabId ? 'active' : ''}`;
-                d.onclick = () => switchTab(t.id);
-                d.innerHTML = `<span>${t.title}</span><div style="margin-left:10px;" onclick="closeTab(event,'${t.id}')">×</div>`;
-                c.appendChild(d);
-            });
-        }
-
-        function closeTab(e, id) { e.stopPropagation(); if (tabs.length <= 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById('frame-' + id).remove(); switchTab(tabs[tabs.length-1].id); }
-
-        document.getElementById('nav-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const val = e.target.value.trim();
-                const target = val.includes('.') ? (val.startsWith('http') ? val : 'https://' + val) : "https://duckduckgo.com" + encodeURIComponent(val);
-                const activeTab = tabs.find(t => t.id === activeTabId);
-                activeTab.url = target;
-                activeTab.title = val.replace('https://','').replace('www.','');
-                
-                if (!ghostMode) {
-                    historyData.unshift({ title: activeTab.title, url: target });
-                    localStorage.setItem('spyder_history', JSON.stringify(historyData.slice(0,50)));
-                }
-
-                document.getElementById('frame-' + activeTabId).src = document.getElementById('mirror-select').value + btoa(target).replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
-                renderTabs(); saveSession();
-            }
-        });
-
-        function clearHistory() { historyData = []; localStorage.removeItem('spyder_history'); alert("Purged."); }
-        function saveSession() { if (!ghostMode) localStorage.setItem('spyder_tabs', JSON.stringify(tabs)); }
-        function loadSession() { const s = localStorage.getItem('spyder_tabs'); if(s) { JSON.parse(s).forEach(t => createNewTab(t.url, t.title, t.id)); } else { createNewTab(); } }
-        
+        document.getElementById('home-search').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
+        document.getElementById('nav-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
         setInterval(() => { document.title = "Home - Classroom"; }, 500);
     </script>
 </body>
