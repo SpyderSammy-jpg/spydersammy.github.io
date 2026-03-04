@@ -4,136 +4,100 @@
     <meta charset="UTF-8">
     <title id="tab-title">Home - Classroom</title>
     <link id="tab-icon" rel="icon" href="https://ssl.gstatic.com">
+    <!-- YOU NEED THESE TWO LINES FOR UV TO WORK -->
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+
     <style>
-        :root { --theme: #ff0000; --wiki-bg: #f6f6f6; --wiki-text: #202122; --wiki-border: #a2a9b1; }
-        .dark-wiki { --wiki-bg: #1a1a1a; --wiki-text: #eaecf0; --wiki-border: #3c3f43; }
+        :root { --theme: #ff0000; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        #login-ui, #home-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; background: #000; z-index: 20; }
-        #home-ui { display: none; z-index: 10; }
+        
+        /* Login Screen */
+        #login-ui { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10002; }
+        
+        /* Home Screen */
+        #home-ui { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: absolute; background: #000; z-index: 10; }
+        
         h1 { font-size: 3.5rem; color: var(--theme); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px var(--theme); }
         .main-input { width: 90%; max-width: 600px; padding: 18px; border-radius: 50px; border: 2px solid #222; background: #0a0a0a; color: #fff; text-align: center; outline: none; font-size: 1.2rem; }
-        #toolbar { display: none; position: fixed; top: 0; width: 100%; height: 50px; background: #1a1a1a; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 15px; z-index: 10001; box-sizing: border-box; }
-        #bm-bar { display: none; background: #111; height: 35px; padding: 0 15px; align-items: center; border-bottom: 1px solid #333; z-index: 10000; overflow-x: auto; white-space: nowrap; }
+
+        /* Toolbar - ENSURE DISPLAY IS NONE */
+        #toolbar { display: none; position: fixed; top: 0; width: 100%; height: 50px; background: #202124; border-bottom: 2px solid var(--theme); align-items: center; padding: 0 10px; box-sizing: border-box; gap: 8px; z-index: 10001; }
+        #nav-input { flex: 1; background: #303134; border: none; border-radius: 20px; padding: 6px 15px; color: white; outline: none; }
+        #controls button { background: #303134; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+
         #frame { display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); border: none; z-index: 999; background: #fff; }
-        /* Wiki Clone Styles */
-        #wiki-stealth { display: none; position: fixed; inset: 0; background: var(--wiki-bg); color: var(--wiki-text); z-index: 50000; overflow-y: auto; font-family: sans-serif; }
-        .wiki-header { background: var(--wiki-bg); border-bottom: 1px solid var(--wiki-border); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; }
-        .wiki-btn { color: #0645ad; cursor: pointer; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="login-ui">
-        <h1>SPYDER SAMMY</h1>
-        <input type="password" id="pass-input" class="main-input" placeholder="Enter Access Code..." autofocus>
+<div id="login-ui">
+    <h1>SPYDER SAMMY</h1>
+    <input type="password" id="pass-input" class="main-input" placeholder="Enter Access Code..." autofocus>
+</div>
+
+<div id="home-ui">
+    <h1>SPYDER SAMMY</h1>
+    <input type="text" id="home-search" class="main-input" placeholder="Search DuckDuckGo or Type URL...">
+</div>
+
+<div id="toolbar">
+    <div id="controls">
+        <button onclick="goHome()">🏠</button>
+        <button onclick="refreshPage()">⟳</button>
     </div>
+    <input type="text" id="nav-input" placeholder="Navigate...">
+</div>
 
-    <div id="home-ui">
-        <h1>SPYDER SAMMY</h1>
-        <input type="text" id="home-search" class="main-input" placeholder="Search DuckDuckGo or Type URL...">
-    </div>
+<iframe id="frame"></iframe>
 
-    <!-- Wikipedia Replica -->
-    <div id="wiki-stealth">
-        <div class="wiki-header">
-            <div style="display:flex; align-items:center;">
-                <span onclick="toggleStealth()" style="font-size: 20px; margin-right: 20px; color:var(--wiki-text); cursor:pointer;">☰</span>
-                <img src="https://en.wikipedia.org" height="22">
-            </div>
-            <div style="display:flex; gap: 15px; font-size: 12px;">
-                <span onclick="toggleWikiDark()" style="cursor:pointer; color: #0645ad;">Dark Mode</span>
-                <input type="text" id="wiki-search-input" placeholder="Search Wikipedia" style="border: 1px solid #aaa; padding: 2px 5px;">
-            </div>
-        </div>
-        <div style="max-width: 1000px; margin: 0 auto; padding: 40px; text-align: left;">
-            <h1 style="font-family: serif; border-bottom: 1px solid #aaa; font-size: 2rem;">Photosynthesis</h1>
-            <p><b>Photosynthesis</b> is a process used by plants and other organisms to convert light energy into chemical energy...</p>
-        </div>
-    </div>
+<script>
+const PASS = "sammy@sab2026";
 
-    <div id="toolbar">
-        <div style="flex:1; display:flex; align-items:center;">
-            <span onclick="toggleStealth()" style="margin-right:15px; font-weight:bold; color:#fff; background:#444; padding:2px 10px; border-radius:4px; cursor:pointer;">W</span>
-            <input type="text" id="nav-input" style="width:75%; background:#252525; border:none; border-radius:15px; padding:6px 15px; color:#fff; outline:none;" placeholder="Navigate...">
-        </div>
-        <div style="font-size:10px; color:#555; gap:10px; display:flex;">
-            <span>CTRL+J (Save)</span>
-            <span>CTRL+3 (History)</span>
-            <span>` (Panic)</span>
-        </div>
-    </div>
+// This function now uses YOUR local UV files instead of a random link
+function launch(query) {
+    if (!query) return;
+    let target = query.includes('.') && !query.includes(' ') ? 
+        (query.startsWith('http') ? query : 'https://' + query) : 
+        "https://duckduckgo.com/?q=" + encodeURIComponent(query);
 
-    <div id="bm-bar"></div>
-    <iframe id="frame"></iframe>
+    document.getElementById('home-ui').style.display = "none";
+    document.getElementById('frame').style.display = "block";
+    
+    // UV MAGIC: This encodes the URL so iBoss can't see it
+    if (window.__uv$config) {
+        document.getElementById('frame').src = __uv$config.prefix + __uv$config.encodeUrl(target);
+    } else {
+        alert("Ultraviolet is still loading... wait 1 second.");
+    }
+}
 
-    <script>
-        const PASS = "sammy@sab2026";
-        // New UV Proxy Mirror (Direct Node)
-        const PROXY_MIRROR = "https://uv.student-portal.cloud";
+// ACCESS CODE LOGIC
+document.getElementById('pass-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.value === PASS) {
+        document.getElementById('login-ui').style.display = "none"; // Hide Login
+        document.getElementById('home-ui').style.display = "flex"; // Show Home
+        document.getElementById('toolbar').style.display = "flex"; // ONLY SHOW TOOLBAR NOW
         
-        let history = JSON.parse(localStorage.getItem('spy_h') || "[]");
-        let bookmarks = JSON.parse(localStorage.getItem('spy_b') || "[]");
-
-        // ⌨️ Shortcuts: Ctrl+3 (History) & Ctrl+J (Bookmark)
-        window.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === '3') { e.preventDefault(); alert("History:\n" + history.map(h => h.t).join("\n")); }
-            if (e.ctrlKey && e.key.toLowerCase() === 'j') { e.preventDefault(); addBookmark(); }
-            if (e.code === 'Backquote') window.location.replace("https://classroom.google.com");
-        });
-
-        function toggleStealth() { document.getElementById('wiki-stealth').style.display = (document.getElementById('wiki-stealth').style.display === 'block') ? 'none' : 'block'; }
-        function toggleWikiDark() { document.getElementById('wiki-stealth').classList.toggle('dark-wiki'); }
-
-        // 🚀 THE FIX: Correct XOR/Base64 UV Encoding
-        function encodeUV(url) {
-            if (!url) return "";
-            return btoa(encodeURIComponent(url.split('').map((char, ind) => ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char).join('')))
-                .replace(/\//g, "_").replace(/\+/g, "-").replace(/=/g, "");
+        // REGISTER THE SERVICE WORKER (The Tunnel Engine)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./uv/uv.sw.js', { scope: __uv$config.prefix });
         }
+    }
+});
 
-        function launch(query) {
-            if (!query) return;
-            let target = query.includes('.') && !query.includes(' ') ? 
-                (query.startsWith('http') ? query : 'https://' + query) : 
-                "https://duckduckgo.com" + encodeURIComponent(query);
-            
-            document.getElementById('home-ui').style.display = "none";
-            document.getElementById('frame').style.display = "block";
-            document.getElementById('frame').src = PROXY_MIRROR + encodeUV(target);
-            
-            history.unshift({t: query, u: target});
-            localStorage.setItem('spy_h', JSON.stringify(history.slice(0, 15)));
-            document.title = "Home - Classroom";
-        }
+function goHome() {
+    document.getElementById('frame').style.display = "none";
+    document.getElementById('home-ui').style.display = "flex";
+}
 
-        function addBookmark() {
-            const val = document.getElementById('nav-input').value || document.getElementById('home-search').value || "New Page";
-            bookmarks.push({t: val, u: val});
-            localStorage.setItem('spy_b', JSON.stringify(bookmarks));
-            renderBookmarks();
-            alert("Bookmark Saved: " + val);
-        }
+function refreshPage() {
+    const frame = document.getElementById('frame');
+    frame.src = frame.src;
+}
 
-        function renderBookmarks() {
-            const bar = document.getElementById('bm-bar');
-            bar.style.display = bookmarks.length ? "flex" : "none";
-            bar.innerHTML = bookmarks.map(b => `<div class="bm-link" onclick="launch('${b.u}')" style="color:#aaa; font-size:11px; margin-right:15px; cursor:pointer;">⭐ ${b.t}</div>`).join('');
-        }
-
-        document.getElementById('pass-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.target.value === PASS) {
-                document.getElementById('login-ui').style.display = "none";
-                document.getElementById('home-ui').style.display = "flex";
-                document.getElementById('toolbar').style.display = "flex";
-                renderBookmarks();
-            }
-        });
-
-        document.getElementById('home-search').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
-        document.getElementById('nav-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') launch(e.target.value); });
-        document.getElementById('wiki-search-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { launch("https://en.wikipedia.org" + e.target.value); toggleStealth(); } });
-        
-        setInterval(() => { document.title = "Home - Classroom"; }, 500);
-    </script>
+document.getElementById('home-search').addEventListener('keydown', e => { if (e.key === 'Enter') launch(e.target.value); });
+document.getElementById('nav-input').addEventListener('keydown', e => { if (e.key === 'Enter') launch(e.target.value); });
+</script>
 </body>
 </html>
