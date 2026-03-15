@@ -1,2 +1,2 @@
-# spydersammy.github.io
+# spydersammypublic.github.io
 Super speed Proxy
